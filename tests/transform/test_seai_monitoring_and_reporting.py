@@ -5,7 +5,7 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 
-from drem.transform.measurement_and_verification import fuzzymerge_mprn_and_gprn
+from drem.transform.seai_monitoring_and_reporting import fuzzymerge_mprn_and_gprn
 
 CWD = Path(__file__).parent
 DATA = CWD / "data"

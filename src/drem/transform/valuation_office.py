@@ -18,12 +18,6 @@ from fuzzymatch_records.parse_addresses import (
     remove_dublin_postcodes,
 )
 
-from drem._filepaths import INTERIM_DIR, MNR_RAW
-
-LOGGER = logging.getLogger(__name__)
-STREAM_HANDLER = logging.StreamHandler()
-LOGGER.addHandler(STREAM_HANDLER)
-
 
 def _parse_address_column(series: pd.Series, column: str) -> pd.DataFrame:
 
@@ -45,17 +39,38 @@ def parse_address_column(df: pd.DataFrame, column: str) -> pd.DataFrame:
     return pd.concat([df, address_columns], axis="columns")
 
 
+def _clean_valuation_office(valuation_office_raw: pd.DataFrame) -> pd.DataFrame:
+
+    return (
+        valuation_office_raw.rename(columns=str.lower)
+        .rename(columns=str.strip)
+        .assign(
+            address=lambda x: x[
+                ["address 1", "address 2", "address 3", "address 5", "address 5"]
+            ]
+            .astype(str)
+            .agg(" ".join, axis=1)
+            .str.strip()
+            .pipe(clean_fuzzy_column)
+        )
+        .query("area > 0")
+        .loc[:, ("address", "x itm", "y itm", "area", "category", "publication date")]
+    )
+
+
 @prefect.task
-def transform_measurement_and_verification(
-    measurement_and_verification_raw: Dict[str, pd.DataFrame]
+def transform_valuation_office(
+    valuation_office_raw: pd.DataFrame, measure
 ) -> pd.DataFrame:
+
+    valuation_office_clean = _clean_valuation_office(valuation_office_raw)
 
     # Parse address column for easy differentiation of building numbers etc.
     # ... tf-idf struggles with 15 blah road and 17 blah road
-    mprn = measurement_and_verification_raw["MPRN_data"].pipe(
+    mprn = seai_monitoring_and_reporting_raw["MPRN_data"].pipe(
         parse_address_column, "Location"
     )
-    gprn = measurement_and_verification_raw["GPRN_data"].pipe(
+    gprn = seai_monitoring_and_reporting_raw["GPRN_data"].pipe(
         parse_address_column, "Location"
     )
 

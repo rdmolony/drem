@@ -15,6 +15,7 @@ DATA_DIR = BASE_DIR / "data"
 RAW_DIR = DATA_DIR / "raw"
 PROCESSED_DIR = DATA_DIR / "processed"
 INTERIM_DIR = DATA_DIR / "interim"
+EXTERNAL_DIR = DATA_DIR / "external"
 
 FLOW_DIR = BASE_DIR / "plots" / "flows"
 
@@ -76,7 +77,7 @@ SM_GAS_RES_PROFILES_RAW = (
     / "smart_meter_gas"
     / "Smart meters Residential pre-trial survey data - Gas.csv"
 )
-VO_RAW = RAW_DIR / "vo.parquet"
+VO_RAW = EXTERNAL_DIR / "vo.parquet"
 
 
 # Interim Data

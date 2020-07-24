@@ -6,8 +6,8 @@ import prefect
 
 
 @prefect.task
-def load_measurement_and_verification(df: pd.DataFrame, filepath: Path) -> None:
-    """Load measurement_and_verification to files
+def load_seai_monitoring_and_reporting(df: pd.DataFrame, filepath: Path) -> None:
+    """Load seai_monitoring_and_reporting to files
 
     Parameters
     ----------

@@ -1,9 +1,14 @@
+from pathlib import Path
 from typing import Dict, List
 
 import pandas as pd
+from pandas.testing import assert_frame_equal
 import pytest
 
-from drem.preprocess import fuzzymerge_mprn_and_gprn
+from drem.transform.measurement_and_verification import fuzzymerge_mprn_and_gprn
+
+CWD = Path(__file__).parent
+DATA = CWD / "data"
 
 
 @pytest.fixture
@@ -16,8 +21,9 @@ def mnr_sheets() -> Dict[str, pd.DataFrame]:
 
 def test_fuzzymerge_mprn_and_gprn(monkeypatch, tmpdir, mnr_sheets) -> None:
 
-    monkeypatch.setattr(pd, "read_excel", mnr_sheets)
-    input_filepath = tmpdir / "M&R raw.xlsx"
-    output_filepath = tmpdir / "M&R clean.xlsx"
-    fuzzymerge_mprn_and_gprn(input_filepath, output_filepath)
+    input = mnr_sheets
+    expected_output = mnr_sheets["gprn_fuzzymatched"]
 
+    output = fuzzymerge_mprn_and_gprn(input)
+
+    assert_frame_equal(output, expected_output, check_dtype=False)

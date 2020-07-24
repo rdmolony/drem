@@ -93,3 +93,6 @@ dask-worker-space
 # include to keep folder structure
 !.gitignore
 !.gitkeep
+
+# exclude data files...
+*.csv

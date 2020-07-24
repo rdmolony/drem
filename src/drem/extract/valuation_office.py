@@ -6,6 +6,6 @@ import prefect
 
 
 @prefect.task
-def extract_seai_monitoring_and_reporting(filepath: Path) -> Dict[str, pd.DataFrame]:
+def extract_valuation_office(filepath: Path) -> Dict[str, pd.DataFrame]:
 
     return pd.read_parquet(filepath)

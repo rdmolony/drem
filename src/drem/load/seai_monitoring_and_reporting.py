@@ -7,7 +7,7 @@ import prefect
 
 @prefect.task
 def load_seai_monitoring_and_reporting(df: pd.DataFrame, filepath: Path) -> None:
-    """Load seai_monitoring_and_reporting to files
+    """Load data to filepath ...
 
     Parameters
     ----------

@@ -7,7 +7,7 @@ import pandas as pd
 import prefect
 from string_grouper import group_similar_strings
 from fuzzymatch_records.clean_columns import clean_fuzzy_column
-from fuzzymatch_records.deduplicate import deduplicate_dataframe
+from fuzzymatch_records.deduplicate import deduplicate_dataframe_columns
 from fuzzymatch_records.fuzzymatch import (
     calculate_fuzzymatches_for_min_similarity,
     fuzzymatch_dataframes,
@@ -17,12 +17,6 @@ from fuzzymatch_records.parse_addresses import (
     extract_dublin_postcodes,
     remove_dublin_postcodes,
 )
-
-from drem._filepaths import INTERIM_DIR, MNR_RAW
-
-LOGGER = logging.getLogger(__name__)
-STREAM_HANDLER = logging.StreamHandler()
-LOGGER.addHandler(STREAM_HANDLER)
 
 
 def _parse_address_column(series: pd.Series, column: str) -> pd.DataFrame:
@@ -59,13 +53,18 @@ def transform_seai_monitoring_and_reporting(
         parse_address_column, "Location"
     )
 
-    mprn_deduplicated = deduplicate_dataframe(mprn, [("PB Name", 0.8)])
-    gprn_deduplicated = deduplicate_dataframe(gprn, [("PB Name", 0.8)])
+    mprn_deduplicated = deduplicate_dataframe_columns(
+        mprn, columns=["PB Name"], min_similarities=[0.8]
+    )
+    gprn_deduplicated = deduplicate_dataframe_columns(
+        gprn, columns=["PB Name"], min_similarities=[0.8]
+    )
 
     gprn_fuzzymatched = fuzzymatch_dataframes(
         mprn_deduplicated,
         gprn_deduplicated,
-        [("PB Name_deduplicated", 0.8), ("Location_parsed", 0.6)],
+        on_fuzzy=["PB Name_deduplicated", "Location_parsed"],
+        min_similarities=[0.8, 0.6],
     )
 
     """ ^^^ 0.8 & 0.6 represent tf-idf min_similarity

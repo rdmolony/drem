@@ -1,4 +1,5 @@
 from prefect import Flow, task
+from prefect_toolkit import run_flow
 
 from drem.extract import extract_seai_monitoring_and_reporting, extract_valuation_office
 from drem.transform import (
@@ -6,7 +7,6 @@ from drem.transform import (
     transform_valuation_office,
 )
 from drem.load import load_seai_monitoring_and_reporting, load_valuation_office
-from drem.utilities.flow import run_flow
 from drem._filepaths import MNR_RAW, MNR_CLEAN, VO_RAW, VO_CLEAN
 
 
@@ -28,7 +28,7 @@ def etl() -> Flow:
         valuation_office_clean = transform_valuation_office(
             valuation_office_raw, seai_monitoring_and_reporting_clean
         )
-        load_valuation_office(valuation_office_clean, VO_CLEAN)
+        # load_valuation_office(valuation_office_clean, VO_CLEAN)
 
     return flow
 

@@ -26,13 +26,16 @@ def clean_valuation_office(valuation_office_raw: pd.DataFrame) -> pd.DataFrame:
             address=lambda x: x[
                 ["address 1", "address 2", "address 3", "address 5", "address 5"]
             ]
+            .fillna("")
             .astype(str)
             .agg(" ".join, axis=1)
+            .str.replace(" +", " ")
             .str.strip()
             .pipe(clean_fuzzy_column)
         )
         .query("area > 0")
         .loc[:, ("address", "x itm", "y itm", "area", "category", "publication date")]
+        .assign(category=lambda x: x.category.str.title())
     )
 
 

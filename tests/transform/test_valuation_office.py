@@ -4,35 +4,31 @@ from typing import Dict, List
 import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
+from tdda.referencetest import referencepytest, tag
 
 from drem.transform import transform_valuation_office
 from drem.transform.valuation_office import clean_valuation_office
 
+
 CWD = Path(__file__).parent
-DATA = CWD / "data"
+INPUT_DATA = CWD / "input_data"
 
 
 @pytest.fixture
-def valuation_office() -> Dict[str, pd.DataFrame]:
+def raw_valuation_office() -> Dict[str, pd.DataFrame]:
 
-    return pd.read_excel(DATA / "RawValuationOffice.ods", engine="odf")
-
-
-def test_clean_valuation_office(valuation_office) -> None:
-
-    input = valuation_office
-    valuation_office.pipe(clean_valuation_office)
+    return pd.read_excel(INPUT_DATA / "RawValuationOffice.ods", engine="odf")
 
 
-def test_clean_valuation_office(valuation_office) -> None:
+def test_clean_valuation_office(raw_valuation_office, ref) -> None:
 
-    input = valuation_office
-    valuation_office.pipe(clean_valuation_office)
+    output = raw_valuation_office.pipe(clean_valuation_office)
+    ref.assertDataFrameCorrect(output, "CleanValuationOffice.csv")
 
 
-def test_fuzzymerge_mprn_and_gprn(valuation_office) -> None:
+# def test_fuzzymerge_mprn_and_gprn(valuation_office) -> None:
 
-    input = valuation_office
+#     input = valuation_office
 
-    transform_valuation_office.run(input)
+#     transform_valuation_office.run(input)
 

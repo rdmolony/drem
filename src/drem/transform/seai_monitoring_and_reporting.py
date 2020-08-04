@@ -18,29 +18,10 @@ from fuzzymatch_records.parse_addresses import (
     remove_dublin_postcodes,
 )
 
-
-def _parse_address_column(series: pd.Series, column: str) -> pd.DataFrame:
-
-    parsed_column = f"{column}_parsed"
-    return (
-        series.rename(parsed_column)
-        .pipe(clean_fuzzy_column)
-        .to_frame()
-        .pipe(extract_dublin_postcodes, parsed_column)
-        .pipe(remove_dublin_postcodes, parsed_column)
-        .pipe(extract_address_numbers, parsed_column)
-    )
+from drem.transform.utilities import parse_address_column
 
 
-def parse_address_column(df: pd.DataFrame, column: str) -> pd.DataFrame:
-
-    df = df.copy()
-    address_columns = _parse_address_column(df[column], column)
-    return pd.concat([df, address_columns], axis="columns")
-
-
-@prefect.task
-def transform_seai_monitoring_and_reporting(
+def _merge_mprn_and_gprn(
     seai_monitoring_and_reporting_raw: Dict[str, pd.DataFrame]
 ) -> pd.DataFrame:
 
@@ -84,3 +65,19 @@ def transform_seai_monitoring_and_reporting(
         how="left",
         suffixes=("_mprn", "_gprn"),
     )
+
+
+def _clean_merged_data(merged: pd.DataFrame) -> pd.DataFrame:
+
+    import ipdb
+
+    ipdb.set_trace()
+
+
+@prefect.task
+def transform_seai_monitoring_and_reporting(
+    seai_monitoring_and_reporting_raw: Dict[str, pd.DataFrame]
+) -> pd.DataFrame:
+
+    merged = _merge_mprn_and_gprn(seai_monitoring_and_reporting_raw)
+    return _clean_merged_data(merged)

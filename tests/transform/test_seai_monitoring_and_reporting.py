@@ -5,22 +5,34 @@ import pandas as pd
 from pandas.testing import assert_frame_equal
 import pytest
 
-from drem.transform import transform_seai_monitoring_and_reporting
+from drem.transform import (
+    _merge_mprn_and_gprn,
+    _clean_merged_data,
+)
 
 CWD = Path(__file__).parent
-DATA = CWD / "data"
+INPUT_DATA = CWD / "input_data"
+REF_DATA = CWD / "reference_data"
 
 
 @pytest.fixture
 def mnr_sheets() -> Dict[str, pd.DataFrame]:
 
     return pd.read_excel(
-        DATA / "RawMonitoringAndReporting.ods", sheet_name=None, engine="odf"
+        INPUT_DATA / "RawSEAIMonitoringAndReporting.ods", sheet_name=None, engine="odf"
     )
 
 
-def test_transform_seai_monitoring_and_reporting(mnr_sheets) -> None:
+def test_merge_mprn_and_gprn(mnr_sheets, ref) -> None:
 
     input = mnr_sheets
 
-    transform_seai_monitoring_and_reporting.run(mnr_sheets)
+    output = _merge_mprn_and_gprn(mnr_sheets)
+    ref.assertDataFrameCorrect(output, "MPRNMergedWithGPRN.csv")
+
+
+def test_clean_merged_data(ref) -> None:
+
+    output = _clean_seai_monitoring_and_reporting(mnr_sheets)
+    ref.assertDataFrameCorrect(output, "CleanSEAIMonitoringAndReporting.csv")
+

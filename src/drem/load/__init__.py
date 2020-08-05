@@ -1,2 +1,2 @@
-from drem.load.seai_monitoring_and_reporting import load_seai_monitoring_and_reporting
-from drem.load.valuation_office import load_valuation_office
+from drem.load.seai_monitoring_and_reporting import seai_monitoring_and_reporting
+from drem.load.valuation_office import valuation_office

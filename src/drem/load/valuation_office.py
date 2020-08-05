@@ -6,7 +6,7 @@ import prefect
 
 
 @prefect.task
-def load_valuation_office(df: pd.DataFrame, filepath: Path) -> None:
+def valuation_office(df: pd.DataFrame, filepath: Path) -> None:
     """Load data to filepath ...
 
     Parameters

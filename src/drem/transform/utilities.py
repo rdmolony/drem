@@ -9,19 +9,25 @@ from fuzzymatch_records.parse_addresses import (
 
 def _parse_address_column(series: pd.Series, column: str) -> pd.DataFrame:
 
-    parsed_column = f"{column}_parsed"
+    import ipdb
+
+    ipdb.set_trace()
+
     return (
-        series.rename(parsed_column)
-        .pipe(clean_fuzzy_column)
+        series.copy()
+        .rename(column)
         .to_frame()
-        .pipe(extract_dublin_postcodes, parsed_column)
-        .pipe(remove_dublin_postcodes, parsed_column)
-        .pipe(extract_address_numbers, parsed_column)
+        .pipe(extract_dublin_postcodes, column)
+        .pipe(remove_dublin_postcodes, column)
+        .pipe(extract_address_numbers, column)
     )
 
 
 def parse_address_column(df: pd.DataFrame, column: str) -> pd.DataFrame:
 
     df = df.copy()
+
     address_columns = _parse_address_column(df[column], column)
+    df = df.drop(columns=[column])  # address column will be replaced by parsed version
+
     return pd.concat([df, address_columns], axis="columns")

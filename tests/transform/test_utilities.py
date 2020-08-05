@@ -9,37 +9,37 @@ from tdda.referencetest import referencepytest, tag
 from drem.transform.utilities import parse_address_column
 
 CWD = Path(__file__).parent
-INPUT_DATA = CWD / "input_data"
+TEST_DATA = CWD / "input_data"
 REF_DATA = CWD / "reference_data"
 
 
 @pytest.fixture
 def clean_seai_monitoring_and_reporting() -> Dict[str, pd.DataFrame]:
 
-    return pd.read_csv(REF_DATA / "CleanMonitoringAndReporting.ods",)
+    return pd.read_csv(TEST_DATA / "CleanMonitoringAndReporting.ods",)
 
 
 @pytest.fixture
 def clean_valuation_office() -> Dict[str, pd.DataFrame]:
 
-    return pd.read_csv(REF_DATA / "CleanValuationOffice.csv")
+    return pd.read_csv(TEST_DATA / "CleanValuationOffice.csv")
 
 
-# @pytest.mark.parametrize(
-#     "data,address_column,ref_filename",
-#     [
-#         (
-#             "clean_seai_monitoring_and_reporting",
-#             "Location",
-#             "ParsedSEAIMonitoringAndReporting.csv",
-#         ),
-#         ("clean_valuation_office", "address", "ParsedValtuationOffice.csv"),
-#     ],
-# )
-# def test_parse_address_column(data, address_column, ref_filename, ref) -> None:
+@pytest.mark.parametrize(
+    "input,address_column,ref_filename",
+    [
+        (
+            "clean_seai_monitoring_and_reporting",
+            "Location",
+            "ParsedSEAIMonitoringAndReporting.csv",
+        ),
+        ("clean_valuation_office", "address", "ParsedValtuationOffice.csv"),
+    ],
+)
+def test_parse_address_column(data, address_column, ref_filename, ref) -> None:
 
-#     input = data
-#     column = address_column
+    input = data
+    column = address_column
 
-#     output = parse_address_column(input, column)
-#     ref.assertDataFrameCorrect(output, ref_filename)
+    output = parse_address_column(input, column)
+    ref.assertDataFrameCorrect(output, ref_filename)

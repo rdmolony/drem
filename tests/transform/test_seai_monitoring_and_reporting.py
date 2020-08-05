@@ -30,9 +30,3 @@ def test_merge_mprn_and_gprn(mnr_sheets, ref) -> None:
     output = _merge_mprn_and_gprn(mnr_sheets)
     ref.assertDataFrameCorrect(output, "MPRNMergedWithGPRN.csv")
 
-
-def test_clean_merged_data(ref) -> None:
-
-    output = _clean_seai_monitoring_and_reporting(mnr_sheets)
-    ref.assertDataFrameCorrect(output, "CleanSEAIMonitoringAndReporting.csv")
-

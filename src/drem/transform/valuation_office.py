@@ -39,8 +39,8 @@ def clean_valuation_office(valuation_office_raw: pd.DataFrame) -> pd.DataFrame:
     )
 
 
-@prefect.task
-def transform_valuation_office(
+@prefect.task(name="Transform Valuation Office Data")
+def valuation_office(
     valuation_office_raw: pd.DataFrame, seai_monitoring_and_reporting: pd.DataFrame,
 ) -> pd.DataFrame:
 
@@ -48,8 +48,10 @@ def transform_valuation_office(
 
     ipdb.set_trace()
 
-    valuation_office_clean = valuation_office_raw.pipe(clean_valuation_office).pipe(
-        parse_address_column, "address"
+    valuation_office_clean = (
+        valuation_office_raw.copy()
+        .pipe(clean_valuation_office)
+        .pipe(parse_address_column, "address")
     )
 
     valuation_office_fuzzymatched = fuzzymatch_dataframes(

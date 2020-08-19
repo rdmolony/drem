@@ -1,6 +1,8 @@
 import geopandas as gpd
 import pandas as pd
 
+from prefect import task
+
 
 def _merge_address_columns_into_one(df: pd.DataFrame) -> pd.DataFrame:
 
@@ -40,6 +42,7 @@ def _set_coordinate_reference_system_to_lat_long(
     return gdf.to_crs("epsg:4326")
 
 
+@task
 def transform_vo(vo_raw: pd.DataFrame) -> gpd.GeoDataFrame:
     """Tidy Valuation Office dataset.
 

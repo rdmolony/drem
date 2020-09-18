@@ -1,5 +1,6 @@
 from pathlib import Path
 from re import IGNORECASE
+from typing import List
 
 import geopandas as gpd
 import numpy as np
@@ -126,6 +127,22 @@ def _set_coordinate_reference_system_to_lat_long(
 ) -> gpd.GeoDataFrame:
 
     return gdf.to_crs("epsg:4326")
+
+
+def _group_buildings_by_small_area(
+    vo: gpd.GeoDatFrame, sa_geometries: gpd.GeoDataFrame, on: List[str],
+) -> gpd.GeoDataFrame:
+
+    one_million = 10 ** 6
+    total_demand = (
+        gpd.sjoin(sa_geometries, vo)
+        .groupby("small_area")[on]
+        .sum()
+        .divide(one_million)
+        .reset_index()
+    )
+
+    return sa_geometries.merge(total_demand, how="left")
 
 
 @task
